@@ -1,37 +1,42 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 
 public class BinaryTree {
-    private static Scanner scan = new Scanner (System.in);
-    private static Random random = new Random ();
+    public static Scanner scan = new Scanner (System.in);
+    public static Random random = new Random ();
 
     Node root;
     int size;
-    int[] values = new int[size];
+    ArrayList<Integer> values = new ArrayList<>();
 
-    public BinaryTree(int[] values){
+    public BinaryTree(ArrayList<Integer> values){
         this.values = values;
-        this.root = buildTree(0, values.length - 1);
+        this.size = values.size();
+        this.root = null;
+        buildTree();
     }
 
-/*
-    private Node buildTree(int begin, int end) {
-        if (begin > end) {
-            return null;
+    private void buildTree() {
+        int middle = (values.size()) / 2;
+
+        root = new Node(values.get(middle));
+
+        Node currentNode = root;
+
+        for (int index = 0; index < size; index++) {
+            if(values.get(index) < currentNode.value) {
+                currentNode.leftChild = new Node(values.get(index));
+                currentNode = currentNode.leftChild;
+            } else if(values.get(index) > currentNode.value) {
+                currentNode.rightChild = new Node(values.get(index));
+                currentNode = currentNode.rightChild;
+            }
         }
-
-        int middle = (begin + end) / 2;
-        Node node = new Node(values[middle]);
-
-        node.leftChild = buildTree (begin, middle - 1);
-        node.rightChild = buildTree (middle + 1, end);
-
-        return node;
     }
-*/
 
-    public Node insertInTree(int value) {
-        Node newNode = new Node(value);
+    public Node insertInTree(int newValue) {
+        Node newNode = new Node(newValue);
 
         if(root == null) {
             root = newNode;
@@ -43,62 +48,78 @@ public class BinaryTree {
 
         while(currentNode != null) {
             parentNode = currentNode;
-
-            if(value < currentNode.value) {
-                currentNode.leftChild = currentNode(value);
-            } else if(currentNode.rightChild == null) {
-                currentNode.rightChild = currentNode;
+            if(newValue < currentNode.value) {
+                currentNode = currentNode.leftChild;
+            } else if(newValue > currentNode.value) {
+                currentNode = currentNode.rightChild;
+            } else {
+                return null;
             }
         }
 
+        if (newValue < parentNode.value) {
+            parentNode.leftChild = newNode;
+        } else {
+            parentNode.rightChild = newNode;
+        }
 
-
-        return currentNode;
+        return newNode;
     }
 
-    public int[] anyOrderTraversal(Node node) {
-        int[] result = new int[size];
+    public void binaryTreeTraversal() {
+        System.out.println("Insira 1 para percorrer a árvore em in order, 2 para pre order e 3 para post order: ");
+        int k = BinaryTree.scan.nextInt();
 
-        inOrderTraversalRecursive(node, result);
-/*
-      preOrderTraversalRecursive(node, result);
-      postOrderTraversalRecursive(node, result);
-*/
-
-        return result;
-    }
-
-    private void inOrderTraversalRecursive(Node node, int[] result) {
-        if (node != null) {
-            inOrderTraversalRecursive (node.leftChild, result);
-            System.out.print(node.value + " ");
-            inOrderTraversalRecursive (node.rightChild, result);
+        switch (k) {
+            case 1:
+                System.out.println("inOrderTraversal: ");
+                inOrderTraversal(root);
+                break;
+            case 2:
+                System.out.println("preOrderTraversal: ");
+                preOrderTraversal(root);
+                break;
+            case 3:
+                System.out.println("postOrderTraversal: ");
+                postOrderTraversal(root);
+                break;
         }
     }
 
-/*
-    private void preOrderTraversalRecursive(Node node, int[] result) {
+    private void inOrderTraversal(Node node) {
         if (node != null) {
+            inOrderTraversal(node.leftChild);
             System.out.print(node.value + " ");
-            inOrderTraversalRecursive (node.leftChild, result);
-            inOrderTraversalRecursive (node.rightChild, result);
+            inOrderTraversal(node.rightChild);
         }
     }
 
-    private void postOrderTraversalRecursive(Node node, int[] result) {
+    private void preOrderTraversal(Node node) {
         if (node != null) {
-            inOrderTraversalRecursive (node.leftChild, result);
-            inOrderTraversalRecursive (node.rightChild, result);
+            System.out.print(node.value + " ");
+            preOrderTraversal(node.leftChild);
+            preOrderTraversal(node.rightChild);
+        }
+    }
+
+    private void postOrderTraversal(Node node) {
+        if (node != null) {
+            postOrderTraversal(node.leftChild);
+            postOrderTraversal(node.rightChild);
             System.out.print(node.value + " ");
         }
     }
-*/
 
-    public static int[] fillVector(int size, int minValue, int maxValue){
-        int[] values = new int[size];
+    public static ArrayList<Integer> fillVector(int size, int minValue, int maxValue){
+        ArrayList<Integer> values = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++){
-            values[i] = random.nextInt(maxValue - minValue + 1) + minValue;
+
+            int randNB = random.nextInt(maxValue - minValue + 1) + minValue;
+
+            if (!values.contains(randNB)) {
+                values.add(randNB);
+            }
         }
 
         System.out.println("Vetor preenchido: ");
@@ -107,42 +128,16 @@ public class BinaryTree {
             System.out.print(value + " ");
         }
         System.out.println();
-        return values;
-    }
 
-    //Selection sort
-    public static int[] sorter(int[] values){
-        for (int i = 0; i < values.length - 1; i++) {
-            int minIndex = i;
+        ArrayList<Integer> sortedValues = Sorter.selectionSort(values);
 
-            for (int j = minIndex + 1; j < values.length; j++) {
-                if (values[j] < values[minIndex]) {
-                    minIndex = j;
-                }
-            }
-            int aux = values[i];
-            values[i] = values[minIndex];
-            values[minIndex] = aux;
-            }
-        return values;
-    }
+        System.out.println("Vetor ordenado: ");
 
-    public static void main(String[] args) {
+        for (int value : sortedValues){
+            System.out.print(value + " ");
+        }
+        System.out.println();
 
-        System.out.println("Insira valor para a altura da árvore binária: ");
-        int size = scan.nextInt ();
-
-        System.out.println("Insira valor mínimo que será gerado para preencher a árvore binária: ");
-        int minValue = scan.nextInt ();
-
-        System.out.println("Insira valor máximo que será gerado para preencher a árvore binária: ");
-        int maxValue = scan.nextInt ();
-
-        int[] values = BinaryTree.fillVector (size, minValue, maxValue);
-
-        BinaryTree tree = new BinaryTree(values);
-
-        System.out.println("inOrderTraversal: ");
-        tree.anyOrderTraversal(tree.root);
+        return sortedValues;
     }
 }
