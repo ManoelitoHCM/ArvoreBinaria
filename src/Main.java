@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("Insira valor para a altura da árvore binária: ");
+        System.out.println("Insira valor para a quantidade de nós da árvore binária: ");
         int size = BinaryTree.scan.nextInt();
 
         System.out.println("Insira valor mínimo que será gerado para preencher a árvore binária: ");
@@ -23,5 +23,7 @@ public class Main {
         System.out.println("Root: " + tree.root.value);
 
         tree.binaryTreeTraversal();
+
+        System.out.println("Is the tree balanced? " + tree.isBalanced());
     }
 }

@@ -35,6 +35,54 @@ public class BinaryTree {
         }
     }
 
+    private int getHeight(Node node) {
+        if (node == null) {
+            return 0;
+        }
+
+        int leftHeight = getHeight(node.leftChild);
+        int rightHeight = getHeight(node.rightChild);
+
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(Node node) {
+        if (node == null) {
+            return true;
+        }
+
+        int leftHeight = getHeight(node.leftChild);
+        int rightHeight = getHeight(node.rightChild);
+
+        if (Math.abs(leftHeight - rightHeight) <= 1 && isBalanced(node.leftChild) && isBalanced(node.rightChild)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void balanceTree() {
+        while (!isBalanced()) {
+            root = balanceSubTree(root);
+        }
+    }
+
+    private Node balanceSubTree(Node node) {
+        int balanceFactor = getBalanceFactor(node);
+
+        return node;
+    }
+
+    private int getBalanceFactor(Node node) {
+        if(node == null) {
+            return 0;
+        }
+        return getHeight(node.leftChild) - getHeight(node.rightChild);
+    }
+
     public Node insertInTree(int newValue) {
         Node newNode = new Node(newValue);
 
@@ -138,6 +186,6 @@ public class BinaryTree {
         }
         System.out.println();
 
-        return sortedValues;
+        return values;
     }
 }
